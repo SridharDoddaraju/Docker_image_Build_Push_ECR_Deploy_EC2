@@ -1,10 +1,11 @@
-name: Build and Push nginx Image to AWS ECR
+name: Build, Push, and Deploy nginx Image to AWS ECR and EC2
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+
 jobs:
-  build-and-push:
-    name: Build and Push to ECR
+  build-push-deploy:
+    name: Build, Push, and Deploy to ECR and EC2
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -21,17 +22,32 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    #- name: Automatic Tagging of Releases
-     # id: increment-git-tag
-     # run: |
-     #   bash .    / build/git_update.sh -v major
-
     - name: Build, Tag, and Push the Image to Amazon ECR
       id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: gitactions
-        IMAGE_TAG: latest                   #{{ steps.increment-git-tag.outputs.git-tag }}
+        IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        # Build the Docker image
+        docker build -t my-nginx-image .
+
+        # Tag the image for Amazon ECR
+        docker tag my-nginx-image:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+        # Push the image to Amazon ECR
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+    - name: Deploy to EC2 instance
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_PRIVATE_KEY }}
+        script: |
+          # Stop and remove the existing container if it exists
+          docker stop my-nginx-container || true
+          docker rm my-nginx-container || true
+
+          # Pull and run the Nginx container with the new image from ECR
+          docker run -d --name my-nginx-container -p 80:80 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
