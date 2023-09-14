@@ -30,11 +30,7 @@ jobs:
         IMAGE_TAG: ${{ github.sha }}
       run: |
         # Build the Docker image
-        docker build -t my-nginx-image .
-
-        # Tag the image for Amazon ECR
-        docker tag my-nginx-image:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         # Push the image to Amazon ECR
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
@@ -44,10 +40,18 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_PRIVATE_KEY }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-2
         script: |
+          sudo apt update
+          sudo apt install docker.io -y
+          sudo apt install awscli -y
+          sudo $(aws ecr get-login --no-include-email --region us-east-2);
           # Stop and remove the existing container if it exists
-          #docker stop my-nginx-container || true
-          #docker rm my-nginx-container || true
+          docker stop my-nginx-container || true
+          docker rm my-nginx-container || true
+          docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-          # Pull and run the Nginx container with the new image from ECR
+          #Pull and run the Nginx container with the new image from ECR
           docker run -d --name my-nginx-container -p 80:80 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
