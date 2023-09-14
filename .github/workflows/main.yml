@@ -42,6 +42,7 @@ jobs:
         key: ${{ secrets.EC2_PRIVATE_KEY }}
         envs: ECR_REGISTRY,ECR_REPOSITORY,IMAGE_TAG,aws-access-key-id,aws-secret-access-key,aws-region
         script: |
+          
           sudo $(aws ecr get-login --no-include-email --region us-east-2);
           # Stop and remove the existing container if it exists
           docker stop my-nginx-container || true
