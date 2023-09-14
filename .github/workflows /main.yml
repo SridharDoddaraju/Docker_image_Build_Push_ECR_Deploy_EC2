@@ -1,7 +1,8 @@
 name: Build and Push nginx Image to AWS ECR
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 jobs:
   build-and-push:
     name: Build and Push to ECR
@@ -35,3 +36,6 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+
+
