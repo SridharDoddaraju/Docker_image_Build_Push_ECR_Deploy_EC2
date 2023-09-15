@@ -65,10 +65,10 @@ jobs:
             GITHUB_SHA=$(cat /home/ubuntu/docker/sha.txt)
       
             # Pull and run the Nginx container with the new image from ECR
-            docker pull 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:${GITHUB_SHA}
-            docker run -d --name my-nginx-container -p 80:80 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:${GITHUB_SHA}
-            #cd /home/ubuntu/docker/
+            #docker pull 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:${GITHUB_SHA}
+            #docker run -d --name my-nginx-container -p 80:80 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:${GITHUB_SHA}
+            cd /home/ubuntu/docker/
 
-            #docker-compose up -d
+            docker-compose up -d
            
       
