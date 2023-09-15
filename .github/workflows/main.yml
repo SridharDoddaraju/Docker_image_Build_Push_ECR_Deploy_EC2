@@ -35,7 +35,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
 
       - name: send SHA to ec2 instance 
-        uses: appleboy/scp-action@v1
+        uses: appleboy/scp-action@v2
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
