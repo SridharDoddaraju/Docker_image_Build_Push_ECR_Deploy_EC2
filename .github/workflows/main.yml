@@ -28,11 +28,12 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: gitactions
+          IMAGE_TAG: ${{ github.sha }}
         run: |
           # Build the Docker image
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }} .
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           # Push the image to Amazon ECR
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Deploy to EC2 instance
         uses: appleboy/ssh-action@master
@@ -49,10 +50,10 @@ jobs:
             docker rm my-nginx-container || true
 
             # Pull and run the Nginx container with the new image from ECR
-            docker pull 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:${{ github.sha }}
+            docker pull 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:$IMAGE_TAG
 
             # Navigate to the directory containing your docker-compose.yml file
             cd /home/ubuntu/docker/
 
             # Start the Docker Compose service
-            IMAGE_NAME=807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:${{ github.sha }} docker-compose up -d
+            docker-compose up -d
