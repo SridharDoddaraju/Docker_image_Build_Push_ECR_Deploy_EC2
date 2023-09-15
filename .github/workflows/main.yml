@@ -51,8 +51,8 @@ jobs:
             docker rm my-nginx-container || true
       
             # Pull and run the Nginx container with the new image from ECR
-            docker pull 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:${{ github.sha }}
-            #docker run -d --name my-nginx-container -p 80:80 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:${{ github.sha }}
+            #docker pull 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:{{ github.sha }}
+            #docker run -d --name my-nginx-container -p 80:80 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:{{ github.sha }}
             cd /home/ubuntu/docker/
             docker-compose up -d
            
