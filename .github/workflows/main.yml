@@ -53,7 +53,7 @@ jobs:
       
             # Pull the Nginx container with the new image from ECR
             #docker pull $IMAGE_NAME
-            #cd /home/ubuntu/docker/  # No need to change directory
+            cd /home/ubuntu/docker/  # No need to change directory
             docker-compose up -d
            
       
