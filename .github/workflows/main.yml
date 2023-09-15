@@ -34,25 +34,24 @@ jobs:
           # Push the image to Amazon ECR
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
 
-      - name: Copy Docker Compose File to EC2
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source:  /docker-compose.yml # Update to your local path
-          target: /home/ubuntu/docker/docker-compose.yml           # Update to your remote path
-
-      - name: Deploy Services on EC2
+      - name: Deploy to EC2 instance
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            # Start Docker Compose services on EC2
-            cd /home/ubuntu/docker/docker-compose.yml
-            docker-compose up -d
-
+            
+      
+            # Stop and remove the existing container if it exists
+            sudo service docker start
+            sudo chmod 666 /var/run/docker.sock
+            aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 807775553447.dkr.ecr.us-east-2.amazonaws.com
+            docker stop my-nginx-container || true
+            docker rm my-nginx-container || true
+      
+            # Pull and run the Nginx container with the new image from ECR
+            docker pull 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:${{ github.sha }}
+            docker run -d --name my-nginx-container -p 80:80 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:${{ github.sha }}
 
       
