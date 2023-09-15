@@ -61,7 +61,7 @@ jobs:
             docker stop my-nginx-container || true
             docker rm my-nginx-container || true
             # Read the GitHub SHA from the file
-            GITHUB_SHA=$(cat /home/ubuntu/docker)
+            GITHUB_SHA=$(cat /home/ubuntu/docker/sha.txt)
       
             # Pull and run the Nginx container with the new image from ECR
             #docker pull 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:{{ github.sha }}
