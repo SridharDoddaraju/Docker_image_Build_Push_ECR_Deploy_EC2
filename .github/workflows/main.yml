@@ -34,14 +34,17 @@ jobs:
           # Push the image to Amazon ECR
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
 
+      - name: Save SHA to file
+        run: echo "${{ github.sha }}" > sha.txt 
+
       - name: send SHA to ec2 instance 
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: "${{ github.sha }}"
-          target: /tmp/github_sha
+          source: "sha.txt"
+          target: /home/ubuntu/docker
         
 
       - name: Deploy to EC2 instance
@@ -58,7 +61,7 @@ jobs:
             docker stop my-nginx-container || true
             docker rm my-nginx-container || true
             # Read the GitHub SHA from the file
-            GITHUB_SHA=$(cat /tmp/github_sha)
+            GITHUB_SHA=$(cat /home/ubuntu/docker)
       
             # Pull and run the Nginx container with the new image from ECR
             #docker pull 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:{{ github.sha }}
