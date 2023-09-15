@@ -69,6 +69,6 @@ jobs:
             #docker run -d --name my-nginx-container -p 80:80 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:${GITHUB_SHA}
             cd /home/ubuntu/docker/
 
-            docker-compose up -d
+            GITHUB_SHA=$GITHUB_SHA docker-compose up -d
            
       
