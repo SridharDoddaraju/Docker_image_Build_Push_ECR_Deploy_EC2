@@ -54,6 +54,6 @@ jobs:
             docker pull 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:${{ github.sha }}
             #docker run -d --name my-nginx-container -p 80:80 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:${{ github.sha }}
             cd /home/ubuntu/docker/
-            docker-compose up -d
+            #docker-compose up -d
            
       
