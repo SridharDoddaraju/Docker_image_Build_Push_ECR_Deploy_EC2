@@ -1,7 +1,7 @@
 version: '3'
 services:
   nginx:
-    image: 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:${GITHUB_SHA}
+    image:  ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com/gitactions:${GITHUB_SHA}
     container_name: my-nginx-container
     ports:
       - "80:80"
