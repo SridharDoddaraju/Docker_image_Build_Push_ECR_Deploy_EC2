@@ -40,12 +40,10 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-        env:
           IMAGE_NAME: "807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:${{ github.sha }}"
 
           script: |
             
-      
             # Stop and remove the existing container if it exists
             sudo service docker start
             sudo chmod 666 /var/run/docker.sock
