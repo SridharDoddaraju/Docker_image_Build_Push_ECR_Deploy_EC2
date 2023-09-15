@@ -40,6 +40,9 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
+          env:
+            IMAGE_NAME: "807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:${{ github.sha }}"
+
           script: |
             
       
@@ -50,10 +53,9 @@ jobs:
             docker stop my-nginx-container || true
             docker rm my-nginx-container || true
       
-            # Pull and run the Nginx container with the new image from ECR
-            docker pull 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:${{ github.sha }}
-            #docker run -d --name my-nginx-container -p 80:80 807775553447.dkr.ecr.us-east-2.amazonaws.com/gitactions:${{ github.sha }}
-            cd /home/ubuntu/docker/
+            # Pull the Nginx container with the new image from ECR
+            docker pull $IMAGE_NAME
+            #cd /home/ubuntu/docker/  # No need to change directory
             docker-compose up -d
            
       
